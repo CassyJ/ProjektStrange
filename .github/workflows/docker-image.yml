@@ -1,0 +1,28 @@
+name: Docker Image
+
+on: 
+  workflow_dispatch:
+  
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Docker Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.AZURE_URL }}
+          username: ${{ secrets.AZURE_NAME}}
+          password: ${{ secrets.AZURE_PASS}}
+          
+      - name: Build and Push to ACR
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ secrets.AZURE_URL }}/testexample:${{ github.sha }}
+          file: Dockerfile
